@@ -16,7 +16,7 @@ EXPOSE ${PORT}
 
 # Establece variables de entorno con valores por defecto
 ENV DATABASE_URL=postgresql://myuser:mypass@localhost:5432/mydatabase
-ENV PORT=8084
+ENV PORT=8080
 ENV FLASK_ENV=production
 
 # Comando para iniciar la aplicación
