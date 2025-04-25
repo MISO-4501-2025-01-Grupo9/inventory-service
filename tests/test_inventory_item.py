@@ -7,22 +7,37 @@ from app.models.warehouse import Warehouse
 
 class TestInventoryItem(unittest.TestCase):
     def setUp(self):
-        # Mock the Product and Warehouse classes
+        # Create mock classes for all related models
+        self.manufacturer_mock = MagicMock()
+        self.product_image_mock = MagicMock()
+        self.regulation_mock = MagicMock()
+
+        # Mock the Product class with all its relationships
         self.product_mock = MagicMock(spec=Product)
+        self.product_mock.manufacturer = self.manufacturer_mock
+        self.product_mock.images = [self.product_image_mock]
+        self.product_mock.regulations = [self.regulation_mock]
+
+        # Mock the Warehouse class
         self.warehouse_mock = MagicMock(spec=Warehouse)
 
-        # Mock the query property for both classes
+        # Mock the query property for all classes
         self.product_mock.query = MagicMock()
         self.warehouse_mock.query = MagicMock()
+        self.manufacturer_mock.query = MagicMock()
 
         # Configure the mocks to return themselves when filter_by().first() is called
         self.product_mock.query.filter_by.return_value.first.return_value = self.product_mock
         self.warehouse_mock.query.filter_by.return_value.first.return_value = self.warehouse_mock
+        self.manufacturer_mock.query.filter_by.return_value.first.return_value = self.manufacturer_mock
 
     def test_inventory_item_defaults_and_query(self):
-        # Mock the Product and Warehouse classes
+        # Mock all required classes
         with patch('app.models.inventory_item.Product', return_value=self.product_mock), \
-             patch('app.models.inventory_item.Warehouse', return_value=self.warehouse_mock):
+             patch('app.models.inventory_item.Warehouse', return_value=self.warehouse_mock), \
+             patch('app.models.product.Manufacturer', return_value=self.manufacturer_mock), \
+             patch('app.models.product.ProductImage', return_value=self.product_image_mock), \
+             patch('app.models.product.ProductCountryRegulation', return_value=self.regulation_mock):
 
             # Creamos una instancia del modelo sin persistir en base de datos.
             inventory_item = InventoryItem(
