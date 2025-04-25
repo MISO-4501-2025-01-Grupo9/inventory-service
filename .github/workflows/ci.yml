@@ -78,3 +78,33 @@ jobs:
         run: |
           REPO_LOWER=$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')
           docker push ghcr.io/${REPO_LOWER}:${{ steps.docker_tag.outputs.tag }}
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for GCP Artifact Registry
+        run: |
+          gcloud auth configure-docker us-central1-docker.pkg.dev
+
+      - name: Tag Docker image for GCP
+        run: |
+          REPO_LOWER=$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')
+          if [ "${GITHUB_REF}" == "refs/heads/main" ]; then
+            docker tag ghcr.io/${REPO_LOWER}:${{ steps.docker_tag.outputs.tag }} us-central1-docker.pkg.dev/misw4501/inventory-repo/inventory-service:latest
+          else
+            docker tag ghcr.io/${REPO_LOWER}:${{ steps.docker_tag.outputs.tag }} us-central1-docker.pkg.dev/misw4501/inventory-repo/inventory-service:develop
+          fi
+
+      - name: Push Docker image to GCP
+        run: |
+          REPO_LOWER=$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')
+          if [ "${GITHUB_REF}" == "refs/heads/main" ]; then
+            docker push us-central1-docker.pkg.dev/misw4501/inventory-repo/inventory-service:latest
+          else
+            docker push us-central1-docker.pkg.dev/misw4501/inventory-repo/inventory-service:develop
+          fi
