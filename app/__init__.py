@@ -4,11 +4,14 @@ from config import Config
 from .database import db
 from .controllers.api import api_bp
 from .models import Manufacturer, ProductImage, ProductCountryRegulation
+from flask_cors import CORS
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
     app.register_blueprint(api_bp, url_prefix="/api")
     db.init_app(app)
+    CORS(app)
 
     with app.app_context():
         from .models import Warehouse, InventoryItem, InventoryTransaction, Product
@@ -24,4 +27,9 @@ def create_app():
         api.expose_object(Manufacturer, methods=["GET", "POST", "PATCH", "DELETE"])
         api.expose_object(ProductImage, methods=["GET", "POST", "PATCH", "DELETE"])
         api.expose_object(ProductCountryRegulation, methods=["GET", "POST", "PATCH", "DELETE"])
+
+    # Registrar blueprints
+    from app.routes.pubsub import pubsub_bp
+    app.register_blueprint(pubsub_bp, url_prefix='/api/pubsub')
+
     return app
