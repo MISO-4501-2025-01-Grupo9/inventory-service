@@ -17,7 +17,11 @@ def create_app():
         from .models import Warehouse, InventoryItem, InventoryTransaction, Product
         db.create_all()
 
-        api = SAFRSAPI(app, host=Config.HOST, port=Config.PORT, prefix="/api")
+        api = SAFRSAPI(app,
+                      host=Config.HOST,
+                      port=Config.PORT,
+                      prefix="/api",
+                      base_url=Config.BASE_URL)
 
         # Exponer modelos con métodos CRUD
         api.expose_object(Warehouse, methods=["GET", "POST", "PATCH", "DELETE"])
