@@ -3,7 +3,7 @@ from safrs import SAFRSAPI
 from config import Config
 from .database import db
 from .controllers.api import api_bp
-from .models import Manufacturer
+from .models import Manufacturer, ProductImage, ProductCountryRegulation
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
@@ -22,4 +22,6 @@ def create_app():
         api.expose_object(InventoryTransaction, methods=["GET", "POST", "PATCH", "DELETE"])
         api.expose_object(Product, methods=["GET", "POST", "PATCH", "DELETE"])
         api.expose_object(Manufacturer, methods=["GET", "POST", "PATCH", "DELETE"])
+        api.expose_object(ProductImage, methods=["GET", "POST", "PATCH", "DELETE"])
+        api.expose_object(ProductCountryRegulation, methods=["GET", "POST", "PATCH", "DELETE"])
     return app
