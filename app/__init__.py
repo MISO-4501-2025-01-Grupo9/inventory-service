@@ -1,12 +1,8 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from safrs import SAFRSAPI
 from config import Config
+from .database import db
 from .controllers.api import api_bp
-from .models import Product
-
-
-db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
@@ -15,7 +11,7 @@ def create_app():
     db.init_app(app)
 
     with app.app_context():
-        from .models import Warehouse, InventoryItem, InventoryTransaction
+        from .models import Warehouse, InventoryItem, InventoryTransaction, Product
         db.create_all()
 
         api = SAFRSAPI(app, host=Config.HOST, port=Config.PORT, prefix="/api")

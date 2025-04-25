@@ -1,6 +1,6 @@
 import time
 from safrs import SAFRSBase
-from app import db
+from app.database import db
 
 # --------------------- MODELO: WAREHOUSES ---------------------
 class Warehouse(SAFRSBase, db.Model):
