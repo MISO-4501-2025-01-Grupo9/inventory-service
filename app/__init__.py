@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from safrs import SAFRSAPI
 from config import Config
 from .controllers.api import api_bp
-
+from .models import Product
 
 
 db = SQLAlchemy()
@@ -24,5 +24,5 @@ def create_app():
         api.expose_object(Warehouse, methods=["GET", "POST", "PATCH", "DELETE"])
         api.expose_object(InventoryItem, methods=["GET", "POST", "PATCH", "DELETE"])
         api.expose_object(InventoryTransaction, methods=["GET", "POST", "PATCH", "DELETE"])
-
+        api.expose_object(Product, methods=["GET", "POST", "PATCH", "DELETE"])
     return app
