@@ -18,7 +18,7 @@ def create_app():
         db.create_all()
 
         api = SAFRSAPI(app,
-                      host=Config.HOST,
+                      host=Config.HOST_SWAGGER,
                       port=Config.PORT,
                       prefix="/api")
 

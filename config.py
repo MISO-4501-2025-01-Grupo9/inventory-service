@@ -6,5 +6,6 @@ class Config:
     SAFRS_API_DOCS = True
     SAFRS_API_DOCS_URL = os.environ.get("SAFRS_API_DOCS_URL", "/api/swagger.html")
     HOST = os.getenv('HOST', '0.0.0.0')
+    HOST_SWAGGER = os.getenv('HOST_SWAGGER', 'https://inventory-service-190711226672.us-central1.run.app')
     PORT = int(os.getenv('PORT', 8080))
     BASE_URL = os.getenv('BASE_URL', 'https://inventory-service-190711226672.us-central1.run.app')
