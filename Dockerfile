@@ -23,4 +23,4 @@ ENV HOST=0.0.0.0
 ENV BASE_URL=https://inventory-service-190711226672.us-central1.run.app
 
 # Comando para iniciar la aplicación
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "app:create_app()"]
+CMD ["python", "app.py"]
