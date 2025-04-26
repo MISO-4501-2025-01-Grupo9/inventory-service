@@ -19,7 +19,7 @@ def create_app():
 
         api = SAFRSAPI(app,
                       host=Config.HOST_SWAGGER,
-                      port=Config.PORT,
+                      port=Config.PORT_SWAGGER,
                       prefix="/api")
 
         # Exponer modelos con métodos CRUD
