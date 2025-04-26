@@ -20,8 +20,7 @@ def create_app():
         api = SAFRSAPI(app,
                       host=Config.HOST,
                       port=Config.PORT,
-                      prefix="/api",
-                      base_url=Config.BASE_URL)
+                      prefix="/api")
 
         # Exponer modelos con métodos CRUD
         api.expose_object(Warehouse, methods=["GET", "POST", "PATCH", "DELETE"])
