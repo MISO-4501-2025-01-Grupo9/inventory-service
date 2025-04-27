@@ -34,9 +34,16 @@ def process_csv():
             print("Error: No se encontró 'data' en el mensaje")
             return 'No data in message', 400
 
-        # Los datos ya vienen como JSON, no necesitamos decodificar
-        data = message['data']
-        print(f"Datos extraídos: {data}")
+        # Los datos vienen como string JSON, necesitamos deserializarlos
+        data_str = message['data']
+        print(f"Datos recibidos (string): {data_str}")
+
+        try:
+            data = json.loads(data_str)
+            print(f"Datos deserializados: {data}")
+        except json.JSONDecodeError as e:
+            print(f"Error deserializando datos: {str(e)}")
+            return 'Invalid JSON data', 400
 
         if not isinstance(data, dict):
             print(f"Error: Los datos no son un diccionario. Tipo recibido: {type(data)}")
