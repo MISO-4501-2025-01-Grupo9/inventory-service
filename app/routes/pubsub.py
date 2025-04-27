@@ -1,4 +1,5 @@
 import json
+import base64
 from flask import Blueprint, request
 from app.services.csv_processor import CSVProcessor
 
@@ -34,15 +35,23 @@ def process_csv():
             print("Error: No se encontró 'data' en el mensaje")
             return 'No data in message', 400
 
-        # Los datos vienen como string JSON, necesitamos deserializarlos
+        # Los datos vienen en base64, necesitamos decodificarlos
         data_str = message['data']
-        print(f"Datos recibidos (string): {data_str}")
+        print(f"Datos recibidos (base64): {data_str}")
 
         try:
-            data = json.loads(data_str)
+            # Decodificar base64
+            decoded_data = base64.b64decode(data_str).decode('utf-8')
+            print(f"Datos decodificados (base64): {decoded_data}")
+
+            # Deserializar JSON
+            data = json.loads(decoded_data)
             print(f"Datos deserializados: {data}")
+        except base64.binascii.Error as e:
+            print(f"Error decodificando base64: {str(e)}")
+            return 'Invalid base64 data', 400
         except json.JSONDecodeError as e:
-            print(f"Error deserializando datos: {str(e)}")
+            print(f"Error deserializando JSON: {str(e)}")
             return 'Invalid JSON data', 400
 
         if not isinstance(data, dict):
