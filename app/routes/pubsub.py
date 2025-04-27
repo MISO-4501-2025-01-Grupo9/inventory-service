@@ -15,13 +15,19 @@ def process_csv():
         if not isinstance(envelope, dict) or 'message' not in envelope:
             return 'Invalid message format', 400
 
-        # Decodificar el mensaje
+        # Obtener los datos del mensaje
         message = envelope['message']
         if not message.get('data'):
             return 'No data in message', 400
 
-        # Decodificar los datos del mensaje
-        data = json.loads(message['data'].decode('utf-8'))
+        # Los datos ya vienen como JSON, no necesitamos decodificar
+        data = message['data']
+        if not isinstance(data, dict):
+            return 'Invalid data format', 400
+
+        # Validar campos requeridos
+        if 'bucket' not in data or 'filename' not in data:
+            return 'Missing required fields: bucket and filename', 400
 
         # Procesar el archivo CSV
         processor = CSVProcessor(data['bucket'], data['filename'])
