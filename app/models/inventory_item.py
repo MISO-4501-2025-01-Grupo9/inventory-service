@@ -18,4 +18,4 @@ class InventoryItem(SAFRSBase, db.Model):
     # Relación uno a muchos con transactions
     transactions = db.relationship("InventoryTransaction", back_populates="inventory_item",
                                    cascade="all, delete-orphan", lazy="joined")
-
+    user = db.relationship("Product", back_populates="items")
