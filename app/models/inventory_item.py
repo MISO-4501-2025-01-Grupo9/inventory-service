@@ -14,8 +14,8 @@ class InventoryItem(SAFRSBase, db.Model):
     created_at = db.Column(db.BigInteger, nullable=False, default=lambda: int(time.time()))
     updated_at = db.Column(db.BigInteger, nullable=False, default=lambda: int(time.time()))
 
-    warehouse = db.relationship("Warehouse", back_populates="inventory_items")
+    warehouse = db.relationship("Warehouse", back_populates="inventory_items", lazy="joined")
     # Relación uno a muchos con transactions
     transactions = db.relationship("InventoryTransaction", back_populates="inventory_item",
-                                   cascade="all, delete-orphan")
-    product = db.relationship("Product", back_populates="items")
+                                   cascade="all, delete-orphan", lazy="joined")
+    product = db.relationship("Product", back_populates="items", lazy="joined")
