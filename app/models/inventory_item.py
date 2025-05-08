@@ -6,8 +6,7 @@ from app import db
 class InventoryItem(SAFRSBase, db.Model):
     __tablename__ = "inventory_items"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    product_id = db.Column(db.Integer,
-                           nullable=False)  # Referencia a productos (en otro servicio o mediante integración)
+    product_id = db.Column(db.Integer, db.ForeignKey("products.id"), nullable=False)
     warehouse_id = db.Column(db.Integer, db.ForeignKey("warehouses.id"), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     location = db.Column(db.String(100))
