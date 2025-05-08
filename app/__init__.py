@@ -20,10 +20,7 @@ def create_app():
         api = SAFRSAPI(app,
                       host=Config.HOST_SWAGGER,
                       port=Config.PORT_SWAGGER,
-                      prefix="/api",
-                      # Configuración para incluir detalles de relaciones
-                      include_relationships=True,
-                      include_methods=True)
+                      prefix="/api")
 
         # Exponer modelos con métodos CRUD
         api.expose_object(Warehouse, methods=["GET", "POST", "PATCH", "DELETE"])
