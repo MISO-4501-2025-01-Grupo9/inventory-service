@@ -19,4 +19,5 @@ class Product(SAFRSBase, db.Model):
     manufacturer = db.relationship("Manufacturer", back_populates="products")
     images = db.relationship("ProductImage", back_populates="product")
     regulations = db.relationship("ProductCountryRegulation", back_populates="product")
+    items = db.relationship("InventoryItem", back_populates="product")
 
