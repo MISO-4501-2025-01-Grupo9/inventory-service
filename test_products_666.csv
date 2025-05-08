@@ -1,4 +1,0 @@
-product_id,warehouse_id,quantity,location,expiry_date,manufacturer_id,name,description,sku,unit_price,storage_conditions,delivery_time
-1,1,666,"A-01-01",1735689600,1,"Paracetamol 500mg","Analgésico y antipirético","PARA500",5.99,"Temperatura ambiente",2
-2,1,50,"A-01-02",1735689600,1,"Ibuprofeno 400mg","Antiinflamatorio no esteroideo","IBU400",7.99,"Temperatura ambiente",2
-3,2,75,"B-02-01",1735689600,2,"Amoxicilina 500mg","Antibiótico de amplio espectro","AMOX500",12.99,"Refrigerado",3
