@@ -35,89 +35,6 @@ class Product(SAFRSBase, db.Model):
         return result
 
     @classmethod
-    def lookup(cls, **kwargs):
-        """
-        Custom lookup method for SAFRS
-        """
-        query = cls.query
-        if 'name' in kwargs:
-            query = query.filter(cls.name.ilike(f'%{kwargs["name"]}%'))
-        if 'description' in kwargs:
-            query = query.filter(cls.description.ilike(f'%{kwargs["description"]}%'))
-        return query.all()
-
-    @classmethod
-    def _s_filter(cls, args, query):
-        """
-        Custom filter method for SAFRS
-        """
-        if args:
-            filters = []
-            try:
-                # Try to parse as JSON first
-                if isinstance(args, str):
-                    filter_list = json.loads(args)
-                    for filter_item in filter_list:
-                        name = filter_item.get('name')
-                        op = filter_item.get('op')
-                        val = filter_item.get('val')
-
-                        if name == 'name' and op == 'like':
-                            filters.append(cls.name.ilike(f'%{val}%'))
-                        elif name == 'description' and op == 'like':
-                            filters.append(cls.description.ilike(f'%{val}%'))
-                        elif op == 'gt':
-                            filters.append(getattr(cls, name) > val)
-                        elif op == 'lt':
-                            filters.append(getattr(cls, name) < val)
-                        elif op == 'gte':
-                            filters.append(getattr(cls, name) >= val)
-                        elif op == 'lte':
-                            filters.append(getattr(cls, name) <= val)
-                        else:
-                            filters.append(getattr(cls, name) == val)
-            except (json.JSONDecodeError, TypeError):
-                # If not JSON, handle as direct key-value pairs
-                for key, value in args.items():
-                    if isinstance(value, dict):
-                        # Handle operators in direct format
-                        for op, val in value.items():
-                            if key == 'name' and op == 'like':
-                                filters.append(cls.name.ilike(f'%{val}%'))
-                            elif key == 'description' and op == 'like':
-                                filters.append(cls.description.ilike(f'%{val}%'))
-                            elif op == 'gt':
-                                filters.append(getattr(cls, key) > val)
-                            elif op == 'lt':
-                                filters.append(getattr(cls, key) < val)
-                            elif op == 'gte':
-                                filters.append(getattr(cls, key) >= val)
-                            elif op == 'lte':
-                                filters.append(getattr(cls, key) <= val)
-                    else:
-                        # Direct value comparison
-                        if key == 'name':
-                            filters.append(cls.name.ilike(f'%{value}%'))
-                        elif key == 'description':
-                            filters.append(cls.description.ilike(f'%{value}%'))
-                        else:
-                            filters.append(getattr(cls, key) == value)
-
-            if filters:
-                query = query.filter(and_(*filters))
-        return query
-
-    @classmethod
-    def _s_get_list(cls, **kwargs):
-        """
-        Override the default get_list method to handle filters
-        """
-        query = cls.query
-        if 'filter' in kwargs:
-            query = cls._s_filter(kwargs['filter'], query)
-        return query
-
-    @classmethod
     @jsonapi_rpc(http_methods=['GET'])
     def search_by_name(cls, name):
         """
@@ -130,4 +47,30 @@ class Product(SAFRSBase, db.Model):
                 required: true
         """
         return cls.query.filter(cls.name.ilike(f'%{name}%')).all()
+
+    @classmethod
+    @jsonapi_rpc(http_methods=['GET'])
+    def search_by_name_with_stock(cls, name, min_stock=0):
+        """
+        description: Search products by partial name match and minimum stock level
+        """
+        # Subquery to get total quantity for each product
+        total_quantity = db.session.query(
+            InventoryItem.product_id,
+            func.sum(InventoryItem.quantity).label('total')
+        ).group_by(InventoryItem.product_id).subquery()
+
+        # Join with the subquery and filter by name and stock
+        query = cls.query.outerjoin(
+            total_quantity,
+            cls.id == total_quantity.c.product_id
+        ).filter(
+            cls.name.ilike(f'%{name}%'),
+            or_(
+                total_quantity.c.total >= min_stock,
+                total_quantity.c.total == None  # Include products with no stock if min_stock is 0
+            )
+        )
+
+        return query.all()
 
