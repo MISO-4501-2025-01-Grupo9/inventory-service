@@ -76,10 +76,12 @@ jobs:
             -Dsonar.python.xunit.reportPath=test-results.xml
             -Dsonar.projectKey=${{ steps.sonar.outputs.projectKey }}
             -Dsonar.organization=${{ steps.sonar.outputs.organization }}
-            -Dsonar.coverage.exclusions=**/__init__.py
+            -Dsonar.coverage.exclusions=**/__init__.py,**/app.py
             -Dsonar.test.inclusions=**/test_*.py
             -Dsonar.sources=app
             -Dsonar.tests=tests
+            -Dsonar.python.coverage.overallReportPaths=coverage.xml
+            -Dsonar.python.coverage.utReportPaths=coverage.xml
 
       - name: Set Docker Tag
         id: docker_tag
