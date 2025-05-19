@@ -3,3 +3,13 @@ omit =
     */app/__init__.py
     */app/models/__init__.py
     */app/controllers/__init__.py
+    */app.py
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    pass
+    raise ImportError
