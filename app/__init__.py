@@ -33,6 +33,8 @@ def create_app():
 
     # Registrar blueprints
     from app.routes.pubsub import pubsub_bp
+    from app.routes.inventory import inventory_bp
     app.register_blueprint(pubsub_bp, url_prefix='/api/pubsub')
+    app.register_blueprint(inventory_bp, url_prefix='/api/inventory')
 
     return app

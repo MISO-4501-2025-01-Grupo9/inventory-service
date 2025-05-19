@@ -1,6 +1,7 @@
 import time
 from safrs import SAFRSBase
 from app import db
+from datetime import datetime
 
 # --------------------- MODELO: INVENTORY_ITEMS ---------------------
 class InventoryItem(SAFRSBase, db.Model):
@@ -15,7 +16,14 @@ class InventoryItem(SAFRSBase, db.Model):
     updated_at = db.Column(db.BigInteger, nullable=False, default=lambda: int(time.time()))
 
     warehouse = db.relationship("Warehouse", back_populates="inventory_items", lazy="joined")
+    product = db.relationship("Product", back_populates="items", lazy="joined")
     # Relación uno a muchos con transactions
     transactions = db.relationship("InventoryTransaction", back_populates="inventory_item",
                                    cascade="all, delete-orphan", lazy="joined")
-    user = db.relationship("Product", back_populates="items")
+
+    def to_dict(self):
+        result = super().to_dict()
+        if self.product:
+            result['product_name'] = self.product.name
+            result['product_sku'] = self.product.sku
+        return result
