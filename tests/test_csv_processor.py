@@ -9,9 +9,9 @@ from app.models.inventory_item import InventoryItem
 from app import db
 
 # Crear una aplicación Flask para proporcionar un contexto
-test_app = Flask(__name__)
-test_app.config['TESTING'] = True
-test_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+_test_flask_app = Flask(__name__)  # Renamed to avoid pytest collecting it as a test
+_test_flask_app.config['TESTING'] = True
+_test_flask_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
 
 class TestCSVProcessor(unittest.TestCase):
 
@@ -20,7 +20,7 @@ class TestCSVProcessor(unittest.TestCase):
         self.bucket_name = "test-bucket"
         self.filename = "test-file.csv"
         # Crear un contexto de aplicación para las pruebas
-        self.app_context = test_app.app_context()
+        self.app_context = _test_flask_app.app_context()
         self.app_context.push()
 
         # CSV de ejemplo para las pruebas
