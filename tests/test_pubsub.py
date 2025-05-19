@@ -164,3 +164,40 @@ def test_process_csv_missing_filename(client):
     # Verificar resultados
     assert response.status_code == 400
     assert response.data.decode('utf-8') == 'Missing required field: filename'
+
+def test_process_csv_data_not_dict(client):
+    # Crear un mensaje con datos que no son un diccionario (por ejemplo, una lista)
+    # Codificar una lista en lugar de un diccionario
+    data_list = ["item1", "item2"]
+    json_data = json.dumps(data_list)
+    encoded_data = base64.b64encode(json_data.encode('utf-8')).decode('utf-8')
+
+    request_data = {
+        'message': {
+            'data': encoded_data
+        }
+    }
+    response = client.post('/process-csv', json=request_data)
+
+    # Verificar resultados
+    assert response.status_code == 400
+    assert response.data.decode('utf-8') == 'Invalid data format'
+
+@patch('app.routes.pubsub.CSVProcessor')
+def test_process_csv_general_exception(mock_csv_processor, client):
+    # Configurar el mock para lanzar una excepción general
+    mock_csv_processor.side_effect = Exception("Error no esperado")
+    
+    # Crear un mensaje de PubSub válido
+    message_data = {
+        'bucket': 'test-bucket',
+        'filename': 'test-file.csv'
+    }
+    request_data = create_pubsub_message(message_data)
+    
+    # Enviar la solicitud
+    response = client.post('/process-csv', json=request_data)
+
+    # Verificar resultados
+    assert response.status_code == 500
+    assert 'Error: Error no esperado' in response.data.decode('utf-8')
