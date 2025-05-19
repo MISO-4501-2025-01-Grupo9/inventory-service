@@ -1,7 +1,7 @@
 import os
 
 class Config:
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'postgresql://myuser:mypass@localhost:5432/mydatabase')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'postgresql://postgres:postgres@localhost:5432/inventory')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SAFRS_API_DOCS = True
     SAFRS_API_DOCS_URL = os.environ.get("SAFRS_API_DOCS_URL", "/api/swagger.html")
